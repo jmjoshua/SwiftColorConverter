@@ -90,7 +90,7 @@ struct SwiftColorConverter {
         return dist
     }
     
-    func xyForModel(xy: CGPoint, model: String) -> CGPoint {
+    public func xyForModel(xy: CGPoint, model: String) -> CGPoint {
         let triangle = triangleForModel(model)
         if (isPointInTriangle(p: xy, triangle: triangle)) {
             return xy
@@ -120,7 +120,7 @@ struct SwiftColorConverter {
         return closestPoint
     }
     
-    func xyBriForModel(xyb: XYBri, model: String) -> XYBri {
+    public func xyBriForModel(xyb: XYBri, model: String) -> XYBri {
         let point = CGPoint(x: xyb.x, y: xyb.y)
         let xy = xyForModel(xy: point, model: model)
         
