@@ -1,4 +1,4 @@
-import Foundation
+import CoreGraphics
 
 struct Triangle: Equatable {
     var r: CGPoint
