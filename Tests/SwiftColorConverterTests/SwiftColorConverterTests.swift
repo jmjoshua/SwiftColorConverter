@@ -85,4 +85,81 @@
             
             XCTAssertEqual(result, false)
         }
+        
+        // MARK: closestPointOnLine
+        func testClosestPointOnLine() {
+            let a = CGPoint(x: -1, y: -1)
+            let b = CGPoint(x: 4, y: 2)
+            let p = CGPoint(x: 4, y: -1)
+            
+            let result = sut.closestPointOnLine(a: a, b: b, p: p)
+            
+            XCTAssertEqual(result, CGPoint(x: 2.6764705882352944, y: 1.2058823529411766))
+        }
+        
+        // MARK: distance
+        func testDistance() {
+            let p1 = CGPoint(x: -1, y: -1)
+            let p2 = CGPoint(x: 4, y: 2)
+            
+            let result = sut.distance(p1: p1, p2: p2)
+            
+            XCTAssertEqual(result, 5.830951894845301)
+        }
+        
+        // MARK: xyForModel
+        func testXYForModel_hueBulbs() {
+            let xy = CGPoint(x: 4, y: 2)
+            let model = "LCT002"
+            
+            let result = sut.xyForModel(xy: xy, model: model)
+            
+            XCTAssertEqual(result, CGPoint(x: 0.675, y: 0.322))
+        }
+        
+        func testXYForModel_livingColors() {
+            let xy = CGPoint(x: 4, y: 2)
+            let model = "LLC005"
+            
+            let result = sut.xyForModel(xy: xy, model: model)
+            
+            XCTAssertEqual(result, CGPoint(x: 0.704, y: 0.296))
+        }
+        
+        func testXYForModel_unsupported() {
+            let xy = CGPoint(x: 4, y: 2)
+            let model = "unsupported"
+            
+            let result = sut.xyForModel(xy: xy, model: model)
+            
+            XCTAssertEqual(result, CGPoint(x: 1, y: 0))
+        }
+        
+        // MARK: xyBriForModel
+        func testXYBriForModel_hueBulbs() {
+            let xyBri = XYBri(x: 1, y: 1, bri: 1)
+            let model = "LCT002"
+            
+            let result = sut.xyBriForModel(xyb: xyBri, model: model)
+            
+            XCTAssertEqual(result, XYBri(x: 0.561760990611976, y: 0.40547065001900223, bri: 1))
+        }
+        
+        func testXYBriForModel_livingColors() {
+            let xyBri = XYBri(x: 1, y: 1, bri: 1)
+            let model = "LLC012"
+            
+            let result = sut.xyBriForModel(xyb: xyBri, model: model)
+            
+            XCTAssertEqual(result, XYBri(x: 0.5289072442648123, y: 0.4444832410059497, bri: 1))
+        }
+        
+        func testXYBriForModel_unsupported() {
+            let xyBri = XYBri(x: 1, y: 1, bri: 1)
+            let model = "unsupported"
+            
+            let result = sut.xyBriForModel(xyb: xyBri, model: model)
+            
+            XCTAssertEqual(result, XYBri(x: 0.5, y: 0.5, bri: 1))
+        }
     }
