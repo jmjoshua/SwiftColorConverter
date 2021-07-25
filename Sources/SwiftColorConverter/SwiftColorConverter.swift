@@ -1,9 +1,32 @@
+import Foundation
+
+struct Triangle {
+    var r: CGPoint
+    var g: CGPoint
+    var b: CGPoint
+}
+
 struct SwiftColorConverter {
     var text = "Hello, World!"
     
-    init(something: String) {
-        text = something
+    func crossProduct(_ p1: CGPoint, _ p2: CGPoint) -> Float {
+        return Float(p1.x * p2.y - p1.y * p2.x)
     }
+    
+    func isPointInTriangle(p: CGPoint, triangle: Triangle) -> Bool {
+        let red = triangle.r;
+        let green = triangle.g;
+        let blue = triangle.b;
+
+        let v1 = CGPoint(x: green.x - red.x, y: green.y - red.y)
+        let v2 = CGPoint(x: blue.x - red.x,  y: blue.y - red.y)
+        let q = CGPoint(x: p.x - red.x, y: p.y - red.y)
+
+        let s = crossProduct(q, v2) / crossProduct(v1, v2);
+        let t = crossProduct(v1, q) / crossProduct(v1, v2);
+
+        return (s >= 0.0) && (t >= 0.0) && (s + t <= 1.0);
+      }
 }
 
 //var colorConverter;
