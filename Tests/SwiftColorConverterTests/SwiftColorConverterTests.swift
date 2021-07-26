@@ -8,6 +8,49 @@
             sut = SwiftColorConverter()
         }
         
+        // MARK: xyBriToRGB
+        func testXYBriToRGB() {
+            let xyBri = XYBri(x: 0.1, y: 0.1, bri: 0.1)
+            let expectedResult = RGB(r: 0.0, g: 0.4142838843277292, b: 0.8885785455117674)
+            
+            let result = try? sut.xyBriToRBG(xyBri)
+            
+            XCTAssertEqual(result, expectedResult)
+        }
+        
+        func testXYBriToRGB_invalidX() {
+            let xyBri = XYBri(x: 0.9, y: 0.1, bri: 0.1)
+            let expectedResult = ConversionError.x(value: 0.9)
+            
+            do {
+                _ = try sut.xyBriToRBG(xyBri)
+            } catch let error {
+                XCTAssertEqual(error as! ConversionError, expectedResult)
+            }
+        }
+        
+        func testXYBriToRGB_invalidY() {
+            let xyBri = XYBri(x: 0.1, y: 1, bri: 0.1)
+            let expectedResult = ConversionError.y(value: 1)
+            
+            do {
+                _ = try sut.xyBriToRBG(xyBri)
+            } catch let error {
+                XCTAssertEqual(error as! ConversionError, expectedResult)
+            }
+        }
+        
+        func testXYBriToRGB_invalidBri() {
+            let xyBri = XYBri(x: 0.1, y: 0.1, bri: 1)
+            let expectedResult = ConversionError.bri(value: 1)
+            
+            do {
+                _ = try sut.xyBriToRBG(xyBri)
+            } catch let error {
+                XCTAssertEqual(error as! ConversionError, expectedResult)
+            }
+        }
+        
         // MARK: triangleForModel
         func testTriangleForModel_hueBulb() {
             let model = "LCT002"

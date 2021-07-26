@@ -12,13 +12,98 @@ public struct XYBri: Equatable {
     var bri: CGFloat
 }
 
-struct RGB {
+public struct RGB: Equatable {
     var r: CGFloat
     var g: CGFloat
     var b: CGFloat
 }
 
+public enum ConversionError: Error, Equatable {
+    case x(value: CGFloat)
+    case y(value: CGFloat)
+    case bri(value: CGFloat)
+    
+    var message: String {
+        switch self {
+        case .x(let value):
+            return "x property must be between 0 and .8, but is: \(value)"
+        case .y(let value):
+            return "y property must be between 0 and 1, but is: \(value)"
+        case .bri(let value):
+            return "bri property must be between 0 and 1, but is: \(value)"
+        }
+    }
+}
+
 public struct SwiftColorConverter {
+    public func xyBriToRBG(_ xyb: XYBri) throws -> RGB {
+        if 0 > xyb.x || xyb.x > 0.8 {
+            throw ConversionError.x(value: xyb.x)
+        } else if 0 > xyb.y || xyb.y > 1 {
+            throw ConversionError.y(value: xyb.y)
+        } else if 0 > xyb.bri || xyb.bri > 1 {
+            throw ConversionError.bri(value: xyb.bri)
+        }
+        
+        let x = xyb.x
+        let y = xyb.y
+        let z = 1.0 - x - y
+        
+        let Y = xyb.bri
+        let X = (Y / y) * x
+        let Z = (Y / y) * z
+        
+        // Wide gamut D65 conversion
+        var r = X  * 1.612 - Y * 0.203 - Z * 0.302
+        var g = -X * 0.509 + Y * 1.412 + Z * 0.066
+        var b = X  * 0.026 - Y * 0.072 + Z * 0.962
+        
+        // Apply gamma correction
+        r = r <= 0.0031308 ? 12.92 * r : (1.0 + 0.055) * pow(r, (1.0 / 2.4)) - 0.055
+        g = g <= 0.0031308 ? 12.92 * g : (1.0 + 0.055) * pow(g, (1.0 / 2.4)) - 0.055
+        b = b <= 0.0031308 ? 12.92 * b : (1.0 + 0.055) * pow(b, (1.0 / 2.4)) - 0.055
+        
+        return RGB(r: cap(r), g: cap(g), b: cap(b))
+    }
+    
+    private func cap(_ x: CGFloat) -> CGFloat {
+        max(0, min(1, x))
+    }
+    
+//    export function xyBriToRgb(xyb : xyBri) : Rgb {
+//
+//        // parameter validation
+//        if (0 > xyb.x || xyb.x > .8)
+//          throw 'x property must be between 0 and .8, but is: ' + xyb.x;
+//        if (0 > xyb.y || xyb.y > 1)
+//          throw 'y property must be between 0 and 1, but is: ' + xyb.y;
+//        if (0 > xyb.bri || xyb.bri > 1)
+//          throw 'bri property must be between 0 and 1, but is: ' + xyb.bri;
+//
+//        // init
+//        var x = xyb.x;
+//        var y = xyb.y;
+//        var z = 1.0 - x - y;
+//
+//        var Y = xyb.bri;
+//        var X = (Y / y) * x;
+//        var Z = (Y / y) * z;
+//
+//        // Wide gamut D65 conversion
+//        var r = X  * 1.612 - Y * 0.203 - Z * 0.302;
+//        var g = -X * 0.509 + Y * 1.412 + Z * 0.066;
+//        var b = X  * 0.026 - Y * 0.072 + Z * 0.962;
+//
+//        // Apply gamma correction
+//        r = r <= 0.0031308 ? 12.92 * r : (1.0 + 0.055) * Math.pow(r, (1.0 / 2.4)) - 0.055;
+//        g = g <= 0.0031308 ? 12.92 * g : (1.0 + 0.055) * Math.pow(g, (1.0 / 2.4)) - 0.055;
+//        b = b <= 0.0031308 ? 12.92 * b : (1.0 + 0.055) * Math.pow(b, (1.0 / 2.4)) - 0.055;
+//
+//        var cap = x => Math.max(0, Math.min(1, x));
+//
+//        return { r: cap(r), g: cap(g), b: cap(b) };
+//      }
+    
     var hueBulbs = [
         "LCT001", /* Hue A19 */
         "LCT002", /* Hue BR30 */
