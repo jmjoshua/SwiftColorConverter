@@ -1,12 +1,12 @@
 import CoreGraphics
 
-struct Triangle: Equatable {
+public struct Triangle: Equatable {
     var r: CGPoint
     var g: CGPoint
     var b: CGPoint
 }
 
-struct XYBri: Equatable {
+public struct XYBri: Equatable {
     var x: CGFloat
     var y: CGFloat
     var bri: CGFloat
