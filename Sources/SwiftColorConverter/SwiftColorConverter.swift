@@ -18,7 +18,7 @@ struct RGB {
     var b: CGFloat
 }
 
-struct SwiftColorConverter {
+public struct SwiftColorConverter {
     var hueBulbs = [
         "LCT001", /* Hue A19 */
         "LCT002", /* Hue BR30 */
@@ -34,6 +34,10 @@ struct SwiftColorConverter {
         "LLC013", /* Storylight */
         "LST001" /* Light Strips */
     ]
+    
+    public init() {
+        
+    }
     
     func triangleForModel(_ model: String) -> Triangle {
         if hueBulbs.contains(model) {
