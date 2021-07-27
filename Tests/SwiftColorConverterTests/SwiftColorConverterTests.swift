@@ -51,6 +51,49 @@
             }
         }
         
+        // MARK: rgbToXYBri
+        func testRGBToXYBri() {
+            let rgb = RGB(r: 0.1, g: 0.1, b: 0.1)
+            let expectedResult = XYBri(x: 0.31273010828044345, y: 0.3290198826715099, bri: 0.010022825574869039)
+            
+            let result = try? sut.rgbToXYBri(rgb: rgb)
+            
+            XCTAssertEqual(result, expectedResult)
+        }
+        
+        func testRGBToXYBri_invalidR() {
+            let rgb = RGB(r: 2.0, g: 0.1, b: 0.1)
+            let expectedResult = ConversionError.rgb
+            
+            do {
+                _ = try sut.rgbToXYBri(rgb: rgb)
+            } catch let error {
+                XCTAssertEqual(error as! ConversionError, expectedResult)
+            }
+        }
+        
+        func testRGBToXYBri_invalidG() {
+            let rgb = RGB(r: 0.1, g: 2.0, b: 0.1)
+            let expectedResult = ConversionError.rgb
+            
+            do {
+                _ = try sut.rgbToXYBri(rgb: rgb)
+            } catch let error {
+                XCTAssertEqual(error as! ConversionError, expectedResult)
+            }
+        }
+        
+        func testRGBToXYBri_invalidB() {
+            let rgb = RGB(r: 0.1, g: 0.1, b: 2.0)
+            let expectedResult = ConversionError.rgb
+            
+            do {
+                _ = try sut.rgbToXYBri(rgb: rgb)
+            } catch let error {
+                XCTAssertEqual(error as! ConversionError, expectedResult)
+            }
+        }
+        
         // MARK: triangleForModel
         func testTriangleForModel_hueBulb() {
             let model = "LCT002"

@@ -22,6 +22,7 @@ public enum ConversionError: Error, Equatable {
     case x(value: CGFloat)
     case y(value: CGFloat)
     case bri(value: CGFloat)
+    case rgb
     
     var message: String {
         switch self {
@@ -31,11 +32,31 @@ public enum ConversionError: Error, Equatable {
             return "y property must be between 0 and 1, but is: \(value)"
         case .bri(let value):
             return "bri property must be between 0 and 1, but is: \(value)"
+        case .rgb:
+            return "r, g, and, b properties must be between 0 and 1"
         }
     }
 }
 
 public struct SwiftColorConverter {
+    var hueBulbs = [
+        "LCT001", /* Hue A19 */
+        "LCT002", /* Hue BR30 */
+        "LCT003" /* Hue GU10 */
+    ]
+    var livingColors: [String] = [
+        "LLC001", /* Monet, Renoir, Mondriaan (gen II) */
+        "LLC005", /* Bloom (gen II) */
+        "LLC006", /* Iris (gen III) */
+        "LLC007", /* Bloom, Aura (gen III) */
+        "LLC011", /* Hue Bloom */
+        "LLC012", /* Hue Bloom */
+        "LLC013", /* Storylight */
+        "LST001" /* Light Strips */
+    ]
+    
+    public init() { }
+    
     public func xyBriToRBG(_ xyb: XYBri) throws -> RGB {
         if 0 > xyb.x || xyb.x > 0.8 {
             throw ConversionError.x(value: xyb.x)
@@ -70,58 +91,41 @@ public struct SwiftColorConverter {
         max(0, min(1, x))
     }
     
-//    export function xyBriToRgb(xyb : xyBri) : Rgb {
-//
-//        // parameter validation
-//        if (0 > xyb.x || xyb.x > .8)
-//          throw 'x property must be between 0 and .8, but is: ' + xyb.x;
-//        if (0 > xyb.y || xyb.y > 1)
-//          throw 'y property must be between 0 and 1, but is: ' + xyb.y;
-//        if (0 > xyb.bri || xyb.bri > 1)
-//          throw 'bri property must be between 0 and 1, but is: ' + xyb.bri;
-//
-//        // init
-//        var x = xyb.x;
-//        var y = xyb.y;
-//        var z = 1.0 - x - y;
-//
-//        var Y = xyb.bri;
-//        var X = (Y / y) * x;
-//        var Z = (Y / y) * z;
-//
-//        // Wide gamut D65 conversion
-//        var r = X  * 1.612 - Y * 0.203 - Z * 0.302;
-//        var g = -X * 0.509 + Y * 1.412 + Z * 0.066;
-//        var b = X  * 0.026 - Y * 0.072 + Z * 0.962;
-//
-//        // Apply gamma correction
-//        r = r <= 0.0031308 ? 12.92 * r : (1.0 + 0.055) * Math.pow(r, (1.0 / 2.4)) - 0.055;
-//        g = g <= 0.0031308 ? 12.92 * g : (1.0 + 0.055) * Math.pow(g, (1.0 / 2.4)) - 0.055;
-//        b = b <= 0.0031308 ? 12.92 * b : (1.0 + 0.055) * Math.pow(b, (1.0 / 2.4)) - 0.055;
-//
-//        var cap = x => Math.max(0, Math.min(1, x));
-//
-//        return { r: cap(r), g: cap(g), b: cap(b) };
-//      }
-    
-    var hueBulbs = [
-        "LCT001", /* Hue A19 */
-        "LCT002", /* Hue BR30 */
-        "LCT003" /* Hue GU10 */
-    ]
-    var livingColors: [String] = [
-        "LLC001", /* Monet, Renoir, Mondriaan (gen II) */
-        "LLC005", /* Bloom (gen II) */
-        "LLC006", /* Iris (gen III) */
-        "LLC007", /* Bloom, Aura (gen III) */
-        "LLC011", /* Hue Bloom */
-        "LLC012", /* Hue Bloom */
-        "LLC013", /* Storylight */
-        "LST001" /* Light Strips */
-    ]
-    
-    public init() {
+    func rgbToXYBri(rgb: RGB) throws -> XYBri {
+        // parameter validation
+        let acceptedRange: Range<CGFloat> = 0.0..<1.0
+        guard acceptedRange.contains(rgb.r),
+              acceptedRange.contains(rgb.g),
+              acceptedRange.contains(rgb.b) else {
+            throw ConversionError.rgb
+        }
         
+        let red = rgb.r
+        let green = rgb.g
+        let blue = rgb.b
+        
+        // Apply gamma correction
+        let r = (red   > 0.04045) ? pow((red   + 0.055) / (1.0 + 0.055), 2.4) : (red   / 12.92)
+        let g = (green > 0.04045) ? pow((green + 0.055) / (1.0 + 0.055), 2.4) : (green / 12.92)
+        let b = (blue  > 0.04045) ? pow((blue  + 0.055) / (1.0 + 0.055), 2.4) : (blue  / 12.92)
+        
+        // Wide gamut conversion D65
+        let X = r * 0.649926 + g * 0.103455 + b * 0.197109
+        let Y = r * 0.234327 + g * 0.743075 + b * 0.022598
+        let Z = r * 0.0000000 + g * 0.053077 + b * 1.035763
+        
+        var cx = X / (X + Y + Z)
+        var cy = Y / (X + Y + Z)
+        
+        if cx.isNaN {
+            cx = 0.0
+        }
+        
+        if cy.isNaN {
+            cy = 0.0
+        }
+        
+        return XYBri(x: cx, y: cy, bri: Y)
     }
     
     func triangleForModel(_ model: String) -> Triangle {
