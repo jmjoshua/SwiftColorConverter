@@ -18,20 +18,21 @@ Color converter for Hue API.
 - `public func xyBriForModel(xyb: XYBri, model: String) -> XYBri`
 
 #### Models
-```public struct XYBri: Equatable {
+`public struct XYBri: Equatable {
     var x: CGFloat
     var y: CGFloat
     var bri: CGFloat
-}```
+}`
 
-```public struct RGB: Equatable {
+`public struct RGB: Equatable {
     var r: CGFloat
     var g: CGFloat
     var b: CGFloat
-}```
+}`
 
 #### Error Types
-```enum ConversionError: Error, Equatable {
+```
+enum ConversionError: Error, Equatable {
     case x(value: CGFloat)
     case y(value: CGFloat)
     case bri(value: CGFloat)
@@ -49,4 +50,5 @@ Color converter for Hue API.
             return "r, g, and, b properties must be between 0 and 1"
         }
     }
-}```
+}
+```
