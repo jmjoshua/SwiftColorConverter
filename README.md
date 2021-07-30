@@ -2,15 +2,12 @@
 
 Color converter for Hue API. 
 
-#### Terms:
+#### Useful Terms:
 - Model - Hue light model (returned by Hue REST API, dictates color conversion method)
 - XYB - x, y, brightness (accepted by Hue REST API)
 - RGB - red, green, blue
 
-## Upcoming Features:
-#### SwiftUI Color Extensions
- - Create a SwiftUI.Color object from XYB - Receive x, y, brightness values from Hue API and convert to Color on initialization.
- - Get XYB from SwiftUI.Color - Convert Color object into values that can be sent to Hue API.
+# Features
 
 #### Functions:
 - `public func xyBriToRBG(_ xyb: XYBri) throws -> RGB`
@@ -52,3 +49,27 @@ enum ConversionError: Error, Equatable {
     }
 }
 ```
+
+## Upcoming Features:
+#### SwiftUI Color Extensions
+ - Create a SwiftUI.Color object from XYB - Receive x, y, brightness values from Hue API and convert to Color on initialization.
+ - Get XYB from SwiftUI.Color - Convert Color object into values that can be sent to Hue API.
+
+---
+
+# Installing SwiftColorConverter
+## Swift Package Manager
+
+The Swift Package Manager is a tool for automating the distribution of Swift code and is integrated into the swift compiler. It is in early development, but SwiftColorConverter does support its use on supported platforms.
+
+#### Install Using Xcode
+Install SwiftColorConverter on Xcode by following Apple's documentation:
+https://developer.apple.com/documentation/swift_packages/adding_package_dependencies_to_your_app
+
+#### Install Using Package.swift.
+Manually adding SwiftColorConverter as a dependency is as easy as adding it to the dependencies value of your Package.swift.
+`
+dependencies: [
+    .package(url: "https://github.com/jmjoshua/SwiftColorConverter.git", .upToNextMajor(from: "0.0.9"))
+]
+`
