@@ -13,25 +13,25 @@ Color converter for Hue API.
  - Get XYB from SwiftUI.Color - Convert Color object into values that can be sent to Hue API.
 
 #### Functions:
-- public func xyBriToRBG(_ xyb: XYBri) throws -> RGB
-- public func xyForModel(xy: CGPoint, model: String) -> CGPoint
-- public func xyBriForModel(xyb: XYBri, model: String) -> XYBri
+- `public func xyBriToRBG(_ xyb: XYBri) throws -> RGB`
+- `public func xyForModel(xy: CGPoint, model: String) -> CGPoint`
+- `public func xyBriForModel(xyb: XYBri, model: String) -> XYBri`
 
 #### Models
-public struct XYBri: Equatable {
+```public struct XYBri: Equatable {
     var x: CGFloat
     var y: CGFloat
     var bri: CGFloat
-}
+}```
 
-public struct RGB: Equatable {
+```public struct RGB: Equatable {
     var r: CGFloat
     var g: CGFloat
     var b: CGFloat
-}
+}```
 
 #### Error Types
-public enum ConversionError: Error, Equatable {
+```enum ConversionError: Error, Equatable {
     case x(value: CGFloat)
     case y(value: CGFloat)
     case bri(value: CGFloat)
@@ -49,4 +49,4 @@ public enum ConversionError: Error, Equatable {
             return "r, g, and, b properties must be between 0 and 1"
         }
     }
-}
+}```
