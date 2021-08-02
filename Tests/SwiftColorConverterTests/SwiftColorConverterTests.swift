@@ -1,6 +1,6 @@
     import XCTest
     @testable import SwiftColorConverter
-
+    
     final class SwiftColorConverterTests: XCTestCase {
         var sut: SwiftColorConverter!
         
@@ -109,8 +109,8 @@
         func testTriangleForModel_livingColors() {
             let model = "LLC013"
             let expectedResult = Triangle(r: CGPoint(x: 0.704, y: 0.296),
-                                           g: CGPoint(x: 0.2151, y: 0.7106),
-                                           b: CGPoint(x: 0.138, y: 0.08))
+                                          g: CGPoint(x: 0.2151, y: 0.7106),
+                                          b: CGPoint(x: 0.138, y: 0.08))
             
             let result = sut.triangleForModel(model)
             

@@ -1,6 +1,6 @@
 import CoreGraphics
 
-public struct Triangle: Equatable {
+internal struct Triangle: Equatable {
     var r: CGPoint
     var g: CGPoint
     var b: CGPoint
@@ -39,12 +39,13 @@ public enum ConversionError: Error, Equatable {
 }
 
 public struct SwiftColorConverter {
-    var hueBulbs = [
+    private var hueBulbs = [
         "LCT001", /* Hue A19 */
         "LCT002", /* Hue BR30 */
         "LCT003" /* Hue GU10 */
     ]
-    var livingColors: [String] = [
+    
+    private var livingColors: [String] = [
         "LLC001", /* Monet, Renoir, Mondriaan (gen II) */
         "LLC005", /* Bloom (gen II) */
         "LLC006", /* Iris (gen III) */
@@ -56,6 +57,10 @@ public struct SwiftColorConverter {
     ]
     
     public init() { }
+    
+    private func cap(_ x: CGFloat) -> CGFloat {
+        max(0, min(1, x))
+    }
     
     public func xyBriToRBG(_ xyb: XYBri) throws -> RGB {
         if 0 > xyb.x || xyb.x > 0.8 {
@@ -87,11 +92,7 @@ public struct SwiftColorConverter {
         return RGB(r: cap(r), g: cap(g), b: cap(b))
     }
     
-    private func cap(_ x: CGFloat) -> CGFloat {
-        max(0, min(1, x))
-    }
-    
-    func rgbToXYBri(rgb: RGB) throws -> XYBri {
+    internal func rgbToXYBri(rgb: RGB) throws -> XYBri {
         // parameter validation
         let acceptedRange: Range<CGFloat> = 0.0..<1.0
         guard acceptedRange.contains(rgb.r),
@@ -128,7 +129,7 @@ public struct SwiftColorConverter {
         return XYBri(x: cx, y: cy, bri: Y)
     }
     
-    func triangleForModel(_ model: String) -> Triangle {
+    internal func triangleForModel(_ model: String) -> Triangle {
         if hueBulbs.contains(model) {
             return Triangle(r: CGPoint(x: 0.675, y: 0.322),
                             g: CGPoint(x: 0.4091, y: 0.518),
@@ -144,11 +145,11 @@ public struct SwiftColorConverter {
         }
     }
     
-    func crossProduct(_ p1: CGPoint, _ p2: CGPoint) -> Float {
+    internal func crossProduct(_ p1: CGPoint, _ p2: CGPoint) -> Float {
         return Float(p1.x * p2.y - p1.y * p2.x)
     }
     
-    func isPointInTriangle(p: CGPoint, triangle: Triangle) -> Bool {
+    internal func isPointInTriangle(p: CGPoint, triangle: Triangle) -> Bool {
         let red = triangle.r;
         let green = triangle.g;
         let blue = triangle.b;
@@ -163,7 +164,7 @@ public struct SwiftColorConverter {
         return (s >= 0.0) && (t >= 0.0) && (s + t <= 1.0);
     }
     
-    func closestPointOnLine(a: CGPoint, b: CGPoint, p: CGPoint) -> CGPoint {
+    internal func closestPointOnLine(a: CGPoint, b: CGPoint, p: CGPoint) -> CGPoint {
         let ap = CGPoint(x: p.x - a.x, y: p.y - a.y)
         let ab = CGPoint(x: b.x - a.x, y: b.y - a.y)
         let ab2 = ab.x * ab.x + ab.y * ab.y
@@ -175,7 +176,7 @@ public struct SwiftColorConverter {
         return CGPoint(x: a.x + ab.x * t, y: a.y + ab.y * t)
     }
     
-    func distance(p1: CGPoint, p2: CGPoint) -> CGFloat {
+    internal func distance(p1: CGPoint, p2: CGPoint) -> CGFloat {
         let dx = p1.x - p2.x
         let dy = p1.y - p2.y
         let dist = sqrt(dx * dx + dy * dy)
