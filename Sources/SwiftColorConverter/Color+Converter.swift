@@ -21,3 +21,14 @@ extension Color {
         return CGPoint()
     }
 }
+
+@available(macOS 10.15, *)
+extension SwiftColorConverter {
+    public func color(for xyb: XYBri) throws -> Color {
+        let rgb = try SwiftColorConverter().xyBriToRBG(xyb)
+        
+        return Color(red: Double(rgb.r),
+                  green: Double(rgb.g),
+                  blue: Double(rgb.b))
+    }
+}
