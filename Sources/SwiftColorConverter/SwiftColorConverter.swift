@@ -58,11 +58,7 @@ public struct SwiftColorConverter {
     
     public init() { }
     
-    public func rgbToCGPoint(_ rgb: RGB, model: String) -> CGPoint {
-        let red = rgb.r
-        let green = rgb.g
-        let blue = rgb.b
-
+    public func rgbToCGPoint(red: CGFloat, green: CGFloat, blue: CGFloat, model: String) -> CGPoint {
         let redC =  (red / 255)
         let greenC = (green / 255)
         let blueC = (blue / 255)
