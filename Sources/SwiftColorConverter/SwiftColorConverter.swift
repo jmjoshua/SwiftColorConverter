@@ -118,43 +118,6 @@ public struct SwiftColorConverter {
         return RGB(r: cap(r), g: cap(g), b: cap(b))
     }
     
-    internal func rgbToXYBri(rgb: RGB) throws -> XYBri {
-        // parameter validation
-        let acceptedRange: Range<CGFloat> = 0.0..<1.0
-        guard acceptedRange.contains(rgb.r),
-              acceptedRange.contains(rgb.g),
-              acceptedRange.contains(rgb.b) else {
-            throw ConversionError.rgb
-        }
-        
-        let red = rgb.r
-        let green = rgb.g
-        let blue = rgb.b
-        
-        // Apply gamma correction
-        let r = (red   > 0.04045) ? pow((red   + 0.055) / (1.0 + 0.055), 2.4) : (red   / 12.92)
-        let g = (green > 0.04045) ? pow((green + 0.055) / (1.0 + 0.055), 2.4) : (green / 12.92)
-        let b = (blue  > 0.04045) ? pow((blue  + 0.055) / (1.0 + 0.055), 2.4) : (blue  / 12.92)
-        
-        // Wide gamut conversion D65
-        let X = r * 0.649926 + g * 0.103455 + b * 0.197109
-        let Y = r * 0.234327 + g * 0.743075 + b * 0.022598
-        let Z = r * 0.0000000 + g * 0.053077 + b * 1.035763
-        
-        var cx = X / (X + Y + Z)
-        var cy = Y / (X + Y + Z)
-        
-        if cx.isNaN {
-            cx = 0.0
-        }
-        
-        if cy.isNaN {
-            cy = 0.0
-        }
-        
-        return XYBri(x: cx, y: cy, bri: Y)
-    }
-    
     internal func triangleForModel(_ model: String) -> Triangle {
         if hueBulbs.contains(model) {
             return Triangle(r: CGPoint(x: 0.675, y: 0.322),
