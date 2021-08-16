@@ -84,8 +84,24 @@ public struct SwiftColorConverter {
         return result
     }
     
-    private func cap(_ x: CGFloat) -> CGFloat {
-        max(0, min(1, x))
+    public func cgPointToRGB(_ point: CGPoint, model: String) -> RGB {
+        let converted = xyForModel(xy: point, model: model)
+        
+        let z = 1.0 - converted.x - converted.y
+        let x = converted.x / (converted.x + converted.y + z);
+        let y = converted.y / (converted.x + converted.y + z);
+        
+        // Wide gamut D65 conversion
+        var r = x  * 1.656492 - y * 0.354851 - z * 0.255038
+        var g = -x * 0.707196 + y * 1.655397 + z * 0.036152
+        var b = x  * 0.051713 - y * 0.121364 + z * 1.011530
+
+        // Apply gamma correction
+        r = r <= 0.0031308 ? 12.92 * r : (1.0 + 0.055) * pow(r, (1.0 / 2.4)) - 0.055
+        g = g <= 0.0031308 ? 12.92 * g : (1.0 + 0.055) * pow(g, (1.0 / 2.4)) - 0.055
+        b = b <= 0.0031308 ? 12.92 * b : (1.0 + 0.055) * pow(b, (1.0 / 2.4)) - 0.055
+        
+        return RGB(r: r * 255, g: g * 255, b: b * 255)
     }
     
     public func xyBriToRBG(_ xyb: XYBri) throws -> RGB {
@@ -115,7 +131,7 @@ public struct SwiftColorConverter {
         g = g <= 0.0031308 ? 12.92 * g : (1.0 + 0.055) * pow(g, (1.0 / 2.4)) - 0.055
         b = b <= 0.0031308 ? 12.92 * b : (1.0 + 0.055) * pow(b, (1.0 / 2.4)) - 0.055
         
-        return RGB(r: cap(r), g: cap(g), b: cap(b))
+        return RGB(r: r * 255, g: g * 255, b: b * 255)
     }
     
     internal func triangleForModel(_ model: String) -> Triangle {

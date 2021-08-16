@@ -8,16 +8,6 @@
             sut = SwiftColorConverter()
         }
         
-        // MARK: xyBriToRGB
-        func testXYBriToRGB() {
-            let xyBri = XYBri(x: 0.1, y: 0.1, bri: 0.1)
-            let expectedResult = RGB(r: 0.0, g: 0.4142838843277292, b: 0.8885785455117674)
-            
-            let result = try? sut.xyBriToRBG(xyBri)
-            
-            XCTAssertEqual(result, expectedResult)
-        }
-        
         func testXYBriToRGB_invalidX() {
             let xyBri = XYBri(x: 0.9, y: 0.1, bri: 0.1)
             let expectedResult = ConversionError.x(value: 0.9)
