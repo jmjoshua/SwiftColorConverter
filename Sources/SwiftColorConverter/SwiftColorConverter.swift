@@ -84,7 +84,7 @@ public struct SwiftColorConverter {
         return result
     }
     
-    public func cgPointToRGB(_ point: CGPoint, model: String) -> RGB {
+    public func cgPointToRGB(_ point: CGPoint, model: String) -> (r: CGFloat, g: CGFloat, b: CGFloat) {
         let converted = xyForModel(xy: point, model: model)
         
         let z = 1.0 - converted.x - converted.y
@@ -101,7 +101,7 @@ public struct SwiftColorConverter {
         g = g <= 0.0031308 ? 12.92 * g : (1.0 + 0.055) * pow(g, (1.0 / 2.4)) - 0.055
         b = b <= 0.0031308 ? 12.92 * b : (1.0 + 0.055) * pow(b, (1.0 / 2.4)) - 0.055
         
-        return RGB(r: r * 255, g: g * 255, b: b * 255)
+        return (r: r * 255, g: g * 255, b: b * 255)
     }
     
     public func xyBriToRBG(_ xyb: XYBri) throws -> RGB {
